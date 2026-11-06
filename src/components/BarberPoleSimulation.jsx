@@ -25,8 +25,9 @@ export default function BarberPoleSimulation({ concentration, theta0, filter2Ang
       },
       side: THREE.DoubleSide,
       transparent: true,
+      depthWrite: false,
     })
-  }, []) // created once; uniforms updated via useEffect
+  }, [])
 
   useEffect(() => {
     if (!material) return
@@ -43,42 +44,51 @@ export default function BarberPoleSimulation({ concentration, theta0, filter2Ang
     }
   })
 
-  const cylinderGeometry = useMemo(
-    () => new THREE.CylinderGeometry(0.5, 0.5, 4, 128, 256, false),
-    []
-  )
+  // Bounding proxy cylinder along local Z-axis (radius 0.5, height 4.0)
+  const cylinderGeometry = useMemo(() => {
+    const geom = new THREE.CylinderGeometry(0.5, 0.5, 4.0, 64, 1, false)
+    geom.rotateX(Math.PI / 2) // Orient height along local Z-axis
+    return geom
+  }, [])
 
-  const glassTubeGeometry = useMemo(
-    () => new THREE.CylinderGeometry(0.52, 0.52, 4, 128, 1, false),
-    []
-  )
+  // Outer physical glass tube
+  const glassTubeGeometry = useMemo(() => {
+    return new THREE.CylinderGeometry(0.52, 0.52, 4.02, 64, 1, false)
+  }, [])
 
   const glassMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: '#aaccff',
+        color: '#d0e5ff',
         transparent: true,
         opacity: 0.08,
-        roughness: 0,
-        metalness: 0,
-        transmission: 0.9,
+        roughness: 0.05,
+        metalness: 0.1,
+        transmission: 0.95,
+        ior: 1.5,
         side: THREE.DoubleSide,
+        depthWrite: false,
       }),
     []
   )
 
   return (
     <>
-      {/* Core shader cylinder */}
-      <mesh ref={meshRef} geometry={cylinderGeometry} material={material} />
+      {/* Volumetric Raymarching Cylinder - rotated so local Z aligns with world Y (upright) */}
+      <mesh
+        ref={meshRef}
+        geometry={cylinderGeometry}
+        material={material}
+        rotation={[-Math.PI / 2, 0, 0]}
+      />
 
-      {/* Outer glass tube */}
+      {/* Outer physical glass sleeve */}
       <mesh geometry={glassTubeGeometry} material={glassMaterial} />
 
-      {/* Lights */}
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[5, 5, 5]} intensity={1.5} />
-      <pointLight position={[0, 0, 3]} color="#ffffff" intensity={0.5} />
+      {/* Lighting */}
+      <ambientLight intensity={0.4} />
+      <directionalLight position={[5, 5, 5]} intensity={1.2} />
+      <pointLight position={[0, 0, 3]} color="#ffffff" intensity={0.6} />
 
       {/* Controls */}
       <OrbitControls enableDamping dampingFactor={0.08} />
