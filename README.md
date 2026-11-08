@@ -7,7 +7,7 @@ A comprehensive, publication-grade interactive Jupyter Notebook simulating the *
 
 ---
 
-## 🚀 Instant Presentation (Zero Local Downloads)
+## 🚀 Instant Presentation
 
 You do **not** need to download or install Python, npm, or any packages locally. You can present and interact with the simulation directly in the cloud:
 
