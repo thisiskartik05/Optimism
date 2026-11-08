@@ -1,5 +1,4 @@
 # 🌀 Optical Rotatory Dispersion & The Barber Pole Effect
-### University Physics / Advanced Physical Optics Simulation Project
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thisiskartik05/Optimism/blob/main/barber_pole_simulation.ipynb)
 
